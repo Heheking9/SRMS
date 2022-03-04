@@ -1,0 +1,26 @@
+.system {
+  width: 1100px;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+  background-color: #7395ff;
+  padding-top: 100px;
+}
+.system img {
+  text-align: center;
+  width: 500px;
+}
+.title h2 {
+  color: #fff;
+  font-size: 36px;
+  letter-spacing: 4px;
+  text-align: center;
+  line-height: 120px;
+}
+.title h4 {
+  color: #fff;
+  font-size: 18px;
+  /* font-weight: bold; */
+  line-height: 38px;
+  text-align: center;
+}
