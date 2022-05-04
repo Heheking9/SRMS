@@ -17,7 +17,7 @@ routes.forEach((item) => {
 @connect((state) => {
   return {
     collapsed: state.getIn(["app", "collapsed"]),
-    adminname: state.getIn(["user", "adminname"])
+    adminname: state.getIn(["user", "adminname"]),
   };
 })
 @withRouter
@@ -26,22 +26,22 @@ class SideBar extends Component {
   state = {
     openKeys: [],
     selectedKeys: [],
-    Tree: []
+    Tree: [],
   };
   componentDidMount() {
     // 挂载时获取路径，利用路径传入菜单组件的openkeys和selectkeys
     const pathname = this.props.location.pathname;
     this.setState({
       openKeys: ["/" + pathname.split("/")[1]],
-      selectedKeys: [pathname]
+      selectedKeys: [pathname],
     });
-    getAdminDetail({
-      adminname: this.props.adminname
-    }).then((_) => {
-      this.setState({
-        Tree: _.data.data[0].checkedKeys
-      });
-    });
+    // getAdminDetail({
+    //   adminname: this.props.adminname
+    // }).then((_) => {
+    //   this.setState({
+    //     Tree: _.data.data[0].checkedKeys
+    //   });
+    // });
   }
   onOpenChange = (keys) => {
     // 遍历keys数组，找出第一个不在openKeys数组的元素
@@ -52,12 +52,12 @@ class SideBar extends Component {
     if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
       // 更新状态
       this.setState({
-        openKeys: keys
+        openKeys: keys,
       });
     } else {
       // 只打开一个菜单
       this.setState({
-        openKeys: latestOpenKey ? [latestOpenKey] : []
+        openKeys: latestOpenKey ? [latestOpenKey] : [],
       });
     }
   };
@@ -68,7 +68,7 @@ class SideBar extends Component {
     if (prevProps.location.pathname !== this.props.location.pathname) {
       const pathname = this.props.location.pathname;
       this.setState({
-        selectedKeys: [pathname]
+        selectedKeys: [pathname],
       });
     }
   }
@@ -137,7 +137,7 @@ class SideBar extends Component {
   };
   changeUrl = ({ key }) => {
     this.setState({
-      selectedKeys: [key]
+      selectedKeys: [key],
     });
     this.props.history.push(key);
   };

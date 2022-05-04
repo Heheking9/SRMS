@@ -11,30 +11,53 @@ const { Content } = Layout;
 @connect((state) => {
   return {
     collapsed: state.getIn(["app", "collapsed"]),
-    adminname: state.getIn(["user", "adminname"])
+    adminname: state.getIn(["user", "adminname"]),
   };
 })
 @withRouter
 // Main组件：根据请求的url渲染对应路由的组件
 class AppMain extends Component {
   state = {
-    Tree: []
+    Tree: [],
   };
   componentDidMount() {
-    getAdminDetail({
-      // 获取管理员信息
-      adminname: this.props.adminname
-    }).then((_) => {
-      let Arr = format(_.data.data[0].checkedKeys);
-      this.setState({
-        Arr
-      });
-    });
+    console.log(this.props.adminname);
+    // getAdminDetail({
+    //   // 获取管理员信息
+    //   adminname: this.props.adminname,
+    // }).then((_) => {
+    //   let Arr = format(_.data.data[0].checkedKeys);
+    //   this.setState({
+    //     Arr,
+    //   });
+    // });
   }
   renderRoute = (routes, name) => {
-    if (this.state.Arr) {
-      if (this.props.adminname === "admin") {
-        return routes.map((item) => {
+    // if (this.state.Arr) {
+    if (this.props.adminname === "admin") {
+      return routes.map((item) => {
+        if (item.children) {
+          return this.renderRoute(item.children);
+        } else {
+          // 若不存在子路由
+          return (
+            // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
+            <Route
+              key={item.path}
+              exact
+              path={item.path}
+              component={item.component}
+            />
+          );
+        }
+      });
+    } else {
+      const copy = [...this.state.Arr];
+      return routes.map((item) => {
+        const index = copy.indexOf(item.key);
+        if (index !== -1) {
+          copy.splice(index, 1);
+          // 如果存在子路由，返回递归的结果
           if (item.children) {
             return this.renderRoute(item.children);
           } else {
@@ -49,33 +72,11 @@ class AppMain extends Component {
               />
             );
           }
-        });
-      } else {
-        const copy = [...this.state.Arr];
-        return routes.map((item) => {
-          const index = copy.indexOf(item.key);
-          if (index !== -1) {
-            copy.splice(index, 1);
-            // 如果存在子路由，返回递归的结果
-            if (item.children) {
-              return this.renderRoute(item.children);
-            } else {
-              // 若不存在子路由
-              return (
-                // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
-                <Route
-                  key={item.path}
-                  exact
-                  path={item.path}
-                  component={item.component}
-                />
-              );
-            }
-          }
-          return null;
-        });
-      }
+        }
+        return null;
+      });
     }
+    // }
   };
   checkPath = (route, path) => {
     return route.some((i) => {
@@ -96,7 +97,7 @@ class AppMain extends Component {
         className="site-layout-background"
         style={{
           margin: "0 16px 24px 16px",
-          padding: 24
+          padding: 24,
         }}
       >
         {/* 异步请求 */}

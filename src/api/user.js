@@ -5,7 +5,7 @@ export function loginFn(params) {
   return request({
     url: "/admin/login",
     method: "POST",
-    data: params
+    data: params,
   });
 }
 // 修改管理员接口
@@ -13,7 +13,7 @@ export function updateAdmin(params) {
   return request({
     url: "/admin/update",
     method: "POST",
-    data: params
+    data: params,
   });
 }
 
@@ -22,7 +22,16 @@ export function deleteAdmin(params) {
   return request({
     url: "/admin/delete",
     method: "POST",
-    data: params
+    data: params,
+  });
+}
+
+// 添加管理员接口
+export function regFn(params) {
+  return request({
+    url: "/admin/register",
+    method: "POST",
+    data: params,
   });
 }
 
@@ -31,14 +40,14 @@ export function addAdmin(params) {
   return request({
     url: "/admin/add",
     method: "POST",
-    data: params
+    data: params,
   });
 }
 
 // 获取管理员列表接口
 export function getAdminList() {
   return request({
-    url: "/admin/list"
+    url: "/admin/list",
   });
 }
 
@@ -46,6 +55,6 @@ export function getAdminList() {
 export function getAdminDetail(params) {
   return request({
     url: "/admin/detail",
-    data: params
+    data: params,
   });
 }

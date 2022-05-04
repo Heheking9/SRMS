@@ -16,6 +16,10 @@
   transition: color 0.3s;
 }
 
+#userEdit{
+  max-width: 600px;
+}
+
 #components-layout-demo-custom-trigger .trigger:hover {
   color: #1890ff;
 }

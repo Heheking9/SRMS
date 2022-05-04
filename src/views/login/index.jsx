@@ -1,21 +1,35 @@
-import React from "react";
+import { useState } from "react";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
-import { loginFn } from "./../../api/user";
-const login = (p) => {
+import { loginFn, regFn } from "./../../api/user";
+const Login = (p) => {
+  const [isLogin, setIsLogin] = useState(true);
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    p.loginAction(values);
+    if (isLogin) {
+      p.loginAction(values);
+    } else {
+      regFn(values).then((res) => {
+        console.log(res);
+        if (res.data.status === 400) {
+          message.error(res.data.message);
+        }
+      });
+    }
   };
-
+  const log = () => {
+    setIsLogin(true);
+  };
+  const reg = () => {
+    setIsLogin(false);
+  };
   return (
     <div className="loginBox">
       <Form
         name="normal_login"
         className="login-form"
         initialValues={{
-          remember: true
+          remember: true,
         }}
         onFinish={onFinish}
       >
@@ -24,8 +38,8 @@ const login = (p) => {
           rules={[
             {
               required: true,
-              message: "请输入管理员账户!"
-            }
+              message: "请输入管理员账户!",
+            },
           ]}
         >
           <Input
@@ -38,8 +52,8 @@ const login = (p) => {
           rules={[
             {
               required: true,
-              message: "请输入正确的密码!"
-            }
+              message: "请输入正确的密码!",
+            },
           ]}
         >
           <Input
@@ -54,8 +68,19 @@ const login = (p) => {
             type="primary"
             htmlType="submit"
             className="login-form-button"
+            onClick={log}
           >
             登 录
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button
+            onClick={reg}
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            注 册
           </Button>
         </Form.Item>
       </Form>
@@ -73,24 +98,25 @@ export default connect(
       loginAction(params) {
         //   发送请求
         loginFn(params).then(({ data: { ...res } }) => {
-          if (res.code === "10003") {
+          console.log(res);
+          if (res.status === 400) {
             message.error("密码错误");
-          } else if (res.code === "10005") {
+          } else if (res.status === 404) {
             message.error("该管理员账户不存在");
           } else {
             message.success("登录成功，即将跳转");
             // 保存状态到本地
-            localStorage.setItem("token", res.data.token);
+            // localStorage.setItem("token", res.data.token);
             localStorage.setItem("adminname", res.data.adminname);
-            localStorage.setItem("role", res.data.role);
+            // localStorage.setItem("role", res.data.role);
             localStorage.setItem("isLogin", true);
             // 更新状态管理器
             dispatch({
               type: "CHANGE_ADMIN_NAME",
-              payload: res.data.adminname
+              payload: res.data.adminname,
             });
-            dispatch({ type: "CHANGE_TOKEN", payload: res.data.token });
-            dispatch({ type: "CHANGE_ROLE", payload: res.data.role });
+            // dispatch({ type: "CHANGE_TOKEN", payload: res.data.token });
+            // dispatch({ type: "CHANGE_ROLE", payload: res.data.role });
             dispatch({ type: "CHANGE_LOGIN_STATE", payload: "true" });
             setTimeout(() => {
               // 登录成功之后跳转到系统首页
@@ -98,7 +124,7 @@ export default connect(
             }, 1000);
           }
         });
-      }
+      },
     };
   }
-)(login);
+)(Login);

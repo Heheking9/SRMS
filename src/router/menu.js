@@ -6,7 +6,7 @@ const routes = [
     path: "/",
     title: "系统首页",
     icon: <HomeOutlined />,
-    component: lazy(() => import("./../views/home/index.jsx"))
+    component: lazy(() => import("./../views/home/index.jsx")),
   },
   {
     key: "0-1",
@@ -20,16 +20,16 @@ const routes = [
         path: "/banner/list",
         title: "轮播图列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/banner/index.jsx"))
+        component: lazy(() => import("./../views/banner/index.jsx")),
       },
       {
         key: "0-1-1",
         path: "/banner/add",
         title: "添加轮播图",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/banner/Add.jsx"))
-      }
-    ]
+        component: lazy(() => import("./../views/banner/Add.jsx")),
+      },
+    ],
   },
   {
     key: "0-2",
@@ -43,30 +43,30 @@ const routes = [
         path: "/pro/list",
         title: "产品列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/pro/index.jsx"))
+        component: lazy(() => import("./../views/pro/index.jsx")),
       },
       {
         key: "0-2-1",
         path: "/pro/seckill",
         title: "秒杀列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/pro/Seckill.jsx"))
+        component: lazy(() => import("./../views/pro/Seckill.jsx")),
       },
       {
         key: "0-2-2",
         path: "/pro/recommend",
         title: "推荐列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/pro/Recommend.jsx"))
+        component: lazy(() => import("./../views/pro/Recommend.jsx")),
       },
       {
         key: "0-2-3",
         path: "/pro/search",
         title: "筛选列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/pro/Search.jsx"))
-      }
-    ]
+        component: lazy(() => import("./../views/pro/Search.jsx")),
+      },
+    ],
   },
   {
     key: "0-3",
@@ -80,17 +80,24 @@ const routes = [
         path: "/user/list",
         title: "用户列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/user/index.jsx"))
+        component: lazy(() => import("./../views/user/index.jsx")),
       },
       {
         key: "0-3-1",
         path: "/user/admin",
         title: "管理员列表",
         icon: <MenuOutlined />,
-        component: lazy(() => import("./../views/user/Admin.jsx"))
-      }
-    ]
-  }
+        component: lazy(() => import("./../views/user/Admin.jsx")),
+      },
+    ],
+  },
+  {
+    key: "0-4",
+    path: "/setting",
+    title: "用户设置",
+    icon: <HomeOutlined />,
+    component: lazy(() => import("./../views/user/edit.jsx")),
+  },
 ];
 
 export default routes;

@@ -2,8 +2,8 @@ import axios from "axios";
 // baseURL 会自动加到所有的请求之前
 const ins = axios.create({
   // http://121.89.205.189/api/pro/list ==> /pro/list
-  baseURL: "http://121.89.205.189/admin",
-  timeout: 100000
+  baseURL: "http://localhost:8888",
+  timeout: 100000,
 });
 
 // 拦截器
