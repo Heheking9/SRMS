@@ -108,7 +108,7 @@ export default connect(
             // 保存状态到本地
             // localStorage.setItem("token", res.data.token);
             localStorage.setItem("adminname", res.data.adminname);
-            // localStorage.setItem("role", res.data.role);
+            localStorage.setItem("role", res.data.role);
             localStorage.setItem("isLogin", true);
             // 更新状态管理器
             dispatch({
@@ -116,7 +116,8 @@ export default connect(
               payload: res.data.adminname,
             });
             // dispatch({ type: "CHANGE_TOKEN", payload: res.data.token });
-            // dispatch({ type: "CHANGE_ROLE", payload: res.data.role });
+            console.log(res.data.role);
+            dispatch({ type: "CHANGE_ROLE", payload: res.data.role });
             dispatch({ type: "CHANGE_LOGIN_STATE", payload: "true" });
             setTimeout(() => {
               // 登录成功之后跳转到系统首页

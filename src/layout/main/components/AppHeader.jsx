@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import { connect } from "react-redux";
 const { Header } = Layout;
@@ -12,7 +12,8 @@ const { Header } = Layout;
   (state) => {
     //   传入store的collapd状态到组件中
     return {
-      collapsed: state.getIn(["app", "collapsed"])
+      adminname: state.getIn(["user", "adminname"]),
+      collapsed: state.getIn(["app", "collapsed"]),
     };
   },
   (dispatch) => {
@@ -20,9 +21,9 @@ const { Header } = Layout;
     return {
       changeCollapsed() {
         dispatch({
-          type: "CHANGE_COLLAPSED"
+          type: "CHANGE_COLLAPSED",
         });
-      }
+      },
     };
   }
 )
@@ -47,11 +48,11 @@ class AppHeader extends Component {
           this.props.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
           {
             className: "trigger",
-            onClick: this.toggle
+            onClick: this.toggle,
           }
         )}
         <div className="userSet">
-          欢迎您:admin &nbsp;&nbsp;&nbsp;&nbsp;
+          欢迎您:{this.props.adminname} &nbsp;&nbsp;&nbsp;&nbsp;
           <Dropdown overlay={this.menu} trigger={["click"]}>
             <Avatar size="small" icon={<UserOutlined />} />
           </Dropdown>

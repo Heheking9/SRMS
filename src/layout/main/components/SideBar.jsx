@@ -18,6 +18,7 @@ routes.forEach((item) => {
   return {
     collapsed: state.getIn(["app", "collapsed"]),
     adminname: state.getIn(["user", "adminname"]),
+    role: state.getIn(["user", "role"]),
   };
 })
 @withRouter
@@ -88,7 +89,7 @@ class SideBar extends Component {
     });
     // 数组去重
     arr = Array.from(new Set(arr));
-    if (this.props.adminname !== "admin") {
+    if (this.props.role !== "admin") {
       return routes.map((item) => {
         // 如果存在子路由
         // 遍历arr为权限keys的数组，在该数组中查询是否存在route的key

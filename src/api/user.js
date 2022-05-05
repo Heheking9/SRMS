@@ -26,10 +26,19 @@ export function deleteAdmin(params) {
   });
 }
 
-// 添加管理员接口
+// 注册接口
 export function regFn(params) {
   return request({
     url: "/admin/register",
+    method: "POST",
+    data: params,
+  });
+}
+
+// 修改用户信息接口
+export function editUser(params) {
+  return request({
+    url: "/admin/edit",
     method: "POST",
     data: params,
   });

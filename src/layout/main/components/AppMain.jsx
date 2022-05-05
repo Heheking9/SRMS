@@ -11,6 +11,7 @@ const { Content } = Layout;
 @connect((state) => {
   return {
     collapsed: state.getIn(["app", "collapsed"]),
+    role: state.getIn(["user", "role"]),
     adminname: state.getIn(["user", "adminname"]),
   };
 })
@@ -21,7 +22,6 @@ class AppMain extends Component {
     Tree: [],
   };
   componentDidMount() {
-    console.log(this.props.adminname);
     // getAdminDetail({
     //   // 获取管理员信息
     //   adminname: this.props.adminname,
@@ -34,7 +34,7 @@ class AppMain extends Component {
   }
   renderRoute = (routes, name) => {
     // if (this.state.Arr) {
-    if (this.props.adminname === "admin") {
+    if (this.props.role === "admin") {
       return routes.map((item) => {
         if (item.children) {
           return this.renderRoute(item.children);

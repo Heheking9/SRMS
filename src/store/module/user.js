@@ -9,7 +9,7 @@ const user = (
     token: localStorage.getItem("token") || "",
     // 用户名
     adminname: localStorage.getItem("adminname") || "",
-    role: localStorage.getItem("role") * 1 || 1
+    role: localStorage.getItem("role") || "",
   }),
   action
 ) => {

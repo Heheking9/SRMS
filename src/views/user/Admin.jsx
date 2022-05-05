@@ -9,7 +9,7 @@ import {
   Select,
   Tree,
   message,
-  Popconfirm
+  Popconfirm,
 } from "antd";
 import { useState, useCallback } from "react";
 import { getAdminList, addAdmin, deleteAdmin } from "./../../api/user";
@@ -47,7 +47,7 @@ const Com = () => {
       adminname,
       password,
       role,
-      checkedKeys
+      checkedKeys,
     };
     addAdmin(data).then((res) => {
       console.log(res);
@@ -76,12 +76,12 @@ const Com = () => {
       title: "序号",
       render(text, record, index) {
         return <span>{(page - 1) * 10 + index + 1}</span>;
-      }
+      },
     },
     {
       align: "center",
       title: "账号",
-      dataIndex: "adminname"
+      dataIndex: "adminname",
     },
     {
       align: "center",
@@ -97,7 +97,7 @@ const Com = () => {
             )}
           </>
         );
-      }
+      },
     },
     {
       align: "center",
@@ -112,7 +112,7 @@ const Com = () => {
               title="确认删除吗?"
               onConfirm={() => {
                 deleteAdmin({
-                  adminid: record.adminid
+                  adminname: record.adminname,
                 }).then((res) => {
                   getAdminList().then((res) => {
                     setAdminList(res.data.data);
@@ -125,8 +125,8 @@ const Com = () => {
             </Popconfirm>
           </Space>
         );
-      }
-    }
+      },
+    },
   ];
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
@@ -136,12 +136,12 @@ const Com = () => {
       <Table
         dataSource={adminList}
         columns={columns}
-        rowKey="adminid"
+        rowKey="_id"
         scroll={{ x: false, y: window.innerHeight - 340 }}
         pagination={{
           onChange: (_) => {
             setPage(_);
-          }
+          },
         }}
       />
       {/* 抽屉 */}
@@ -155,10 +155,10 @@ const Com = () => {
       >
         <Form
           labelCol={{
-            span: 4
+            span: 4,
           }}
           wrapperCol={{
-            span: 14
+            span: 14,
           }}
           layout="horizontal"
         >
@@ -200,7 +200,7 @@ const Com = () => {
           <Form.Item
             labelCol={{
               offset: 4,
-              span: 4
+              span: 4,
             }}
           >
             <Button type="primary" onClick={addAdminFn}>
