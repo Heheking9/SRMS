@@ -11,9 +11,12 @@ const { Header } = Layout;
 @connect(
   (state) => {
     //   传入store的collapd状态到组件中
+    console.log(state);
     return {
-      adminname: state.getIn(["user", "adminname"]),
-      collapsed: state.getIn(["app", "collapsed"]),
+      adminname: state.adminname,
+      isLogin: state.isLogin,
+      keys: state.keys,
+      collapsed: state.collapsed,
     };
   },
   (dispatch) => {
@@ -38,10 +41,15 @@ class AppHeader extends Component {
         <Link to="/setting">设置</Link>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item>退出</Menu.Item>
+      <Menu.Item>
+        <Link to="/login">退出</Link>
+      </Menu.Item>
     </Menu>
   );
   render() {
+    console.log(this.props);
+
+    console.log(this.props.adminname, this.props.keys);
     return (
       <Header className="site-layout-background" style={{ padding: 0 }}>
         {React.createElement(
@@ -52,9 +60,10 @@ class AppHeader extends Component {
           }
         )}
         <div className="userSet">
-          欢迎您:{this.props.adminname} &nbsp;&nbsp;&nbsp;&nbsp;
+          欢迎您:{this.props.adminname}
+          &nbsp;&nbsp;&nbsp;&nbsp;
           <Dropdown overlay={this.menu} trigger={["click"]}>
-            <Avatar size="small" icon={<UserOutlined />} />
+            <Avatar size="small" icon={<UserOutlined />} src="" />
           </Dropdown>
         </div>
       </Header>

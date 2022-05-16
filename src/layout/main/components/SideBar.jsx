@@ -16,9 +16,11 @@ routes.forEach((item) => {
 });
 @connect((state) => {
   return {
-    collapsed: state.getIn(["app", "collapsed"]),
-    adminname: state.getIn(["user", "adminname"]),
-    role: state.getIn(["user", "role"]),
+    adminname: state.adminname,
+    isLogin: state.isLogin,
+    keys: state.keys,
+    collapsed: state.collapsed,
+    role: state.role,
   };
 })
 @withRouter
@@ -89,31 +91,25 @@ class SideBar extends Component {
     });
     // 数组去重
     arr = Array.from(new Set(arr));
-    if (this.props.role !== "admin") {
+    if (this.props.role === "user") {
       return routes.map((item) => {
         // 如果存在子路由
         // 遍历arr为权限keys的数组，在该数组中查询是否存在route的key
-        const index = arr.indexOf(item.key);
-        // 若存在，进行menu的渲染，并删除权限数组的该项，不存在则不执行操作
-        if (index !== -1) {
-          arr.splice(index, 1);
-          if (item.children) {
-            return (
-              <SubMenu key={item.path} icon={item.icon} title={item.title}>
-                {/* 继续递归 */}
-                {this.renderSideBar(item.children)}
-              </SubMenu>
-            );
-          } else {
-            // 不存在子路由
-            return item.hidden ? null : (
-              <Menu.Item key={item.path} icon={item.icon}>
-                {item.title}
-              </Menu.Item>
-            );
-          }
+        if (item.children) {
+          return (
+            <SubMenu key={item.path} icon={item.icon} title={item.title}>
+              {/* 继续递归 */}
+              {this.renderSideBar(item.children)}
+            </SubMenu>
+          );
+        } else {
+          // 不存在子路由
+          return item.hidden || item.path === "/user" ? null : (
+            <Menu.Item key={item.path} icon={item.icon}>
+              {item.title}
+            </Menu.Item>
+          );
         }
-        return null;
       });
     } else {
       return routes.map((item) => {
@@ -126,7 +122,6 @@ class SideBar extends Component {
           );
         } else {
           // 不存在子路由
-
           return item.hidden ? null : (
             <Menu.Item key={item.path} icon={item.icon}>
               {item.title}
@@ -151,7 +146,7 @@ class SideBar extends Component {
             style={{ width: "32px", height: "32px", margin: "0 10px 0 0" }}
             alt=""
           />
-          {this.props.collapsed ? null : <span>JD_ADMIN_PRO</span>}
+          {this.props.collapsed ? null : <span>科研数据管理系统</span>}
         </div>
         <Menu
           onClick={this.changeUrl}

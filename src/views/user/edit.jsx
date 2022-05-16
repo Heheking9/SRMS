@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { editUser } from "./../../api/user";
 import { connect } from "react-redux";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Upload } from "antd";
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -32,7 +32,9 @@ const tailFormItemLayout = {
     },
   },
 };
-
+const getAdminname = () => {
+  return localStorage.getItem("adminname");
+};
 const RegistrationForm = (p) => {
   const [form] = Form.useForm();
 
@@ -53,9 +55,12 @@ const RegistrationForm = (p) => {
       scrollToFirstError
       id="userEdit"
     >
+      <Form.Item name="oldAdminName" label="当前用户名称">
+        <Input disabled placeholder={getAdminname()} />
+      </Form.Item>
       <Form.Item
         name="adminName"
-        label="用户名称"
+        label="修改用户名称"
         rules={[
           {
             required: true,
@@ -68,7 +73,7 @@ const RegistrationForm = (p) => {
 
       <Form.Item
         name="password"
-        label="密码"
+        label="修改密码"
         rules={[
           {
             required: true,

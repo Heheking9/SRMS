@@ -35,10 +35,27 @@ export function regFn(params) {
   });
 }
 
+export function upload(params) {
+  return request({
+    url: "/admin/upload",
+    method: "POST",
+    data: params,
+  });
+}
+
 // 修改用户信息接口
 export function editUser(params) {
   return request({
     url: "/admin/edit",
+    method: "POST",
+    data: params,
+  });
+}
+
+// 修改用户信息接口
+export function editAcess(params) {
+  return request({
+    url: "/admin/editAcess",
     method: "POST",
     data: params,
   });
@@ -57,6 +74,40 @@ export function addAdmin(params) {
 export function getAdminList() {
   return request({
     url: "/admin/list",
+  });
+}
+
+// 获取管理员列表接口
+export function getAdminData(params) {
+  return request({
+    url: "/admin/getAdminData",
+    data: params,
+    method: "POST",
+  });
+}
+
+// 获取管理员列表接口
+export function deleteData(params) {
+  return request({
+    url: "/admin/deleteData",
+    method: "POST",
+    data: params,
+  });
+}
+// 获取行数据
+export function getLineData(params) {
+  return request({
+    url: "/admin/getLineData",
+    method: "POST",
+    data: params,
+  });
+}
+// 获取管理员列表接口
+export function updateData(params) {
+  return request({
+    url: "/admin/updateData",
+    method: "POST",
+    data: params,
   });
 }
 

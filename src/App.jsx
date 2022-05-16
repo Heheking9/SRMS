@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import { connect } from "react-redux";
 // layou 为布局框架
@@ -27,5 +27,5 @@ const App = ({ isLogin }) => {
 };
 
 export default connect((state) => ({
-  isLogin: state.getIn(["user", "isLogin"])
+  isLogin: state.isLogin,
 }))(App);

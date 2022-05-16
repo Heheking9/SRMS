@@ -10,9 +10,9 @@ const { Content } = Layout;
 
 @connect((state) => {
   return {
-    collapsed: state.getIn(["app", "collapsed"]),
-    role: state.getIn(["user", "role"]),
-    adminname: state.getIn(["user", "adminname"]),
+    collapsed: state.collapsed,
+    role: state.role,
+    adminname: state.adminname,
   };
 })
 @withRouter
@@ -34,48 +34,48 @@ class AppMain extends Component {
   }
   renderRoute = (routes, name) => {
     // if (this.state.Arr) {
-    if (this.props.role === "admin") {
-      return routes.map((item) => {
-        if (item.children) {
-          return this.renderRoute(item.children);
-        } else {
-          // 若不存在子路由
-          return (
-            // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
-            <Route
-              key={item.path}
-              exact
-              path={item.path}
-              component={item.component}
-            />
-          );
-        }
-      });
-    } else {
-      const copy = [...this.state.Arr];
-      return routes.map((item) => {
-        const index = copy.indexOf(item.key);
-        if (index !== -1) {
-          copy.splice(index, 1);
-          // 如果存在子路由，返回递归的结果
-          if (item.children) {
-            return this.renderRoute(item.children);
-          } else {
-            // 若不存在子路由
-            return (
-              // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
-              <Route
-                key={item.path}
-                exact
-                path={item.path}
-                component={item.component}
-              />
-            );
-          }
-        }
-        return null;
-      });
-    }
+    // if (this.props.role === "admin") {
+    return routes.map((item) => {
+      if (item.children) {
+        return this.renderRoute(item.children);
+      } else {
+        // 若不存在子路由
+        return (
+          // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
+          <Route
+            key={item.path}
+            exact
+            path={item.path}
+            component={item.component}
+          />
+        );
+      }
+    });
+    // } else {
+    //   // const copy = [...this.state.Arr];
+    //   return routes.map((item) => {
+    //     // const index = copy.indexOf(item.key);
+    //     // if (index !== -1) {
+    //     // copy.splice(index, 1);
+    //     // 如果存在子路由，返回递归的结果
+    //     if (item.children) {
+    //       return this.renderRoute(item.children);
+    //     } else {
+    //       // 若不存在子路由
+    //       return (
+    //         // 参数：key；精确查找（路径必须完全一致）；路由的路径；渲染的组件
+    //         <Route
+    //           key={item.path}
+    //           exact
+    //           path={item.path}
+    //           component={item.component}
+    //         />
+    //       );
+    //     }
+    //     // }
+    //     return null;
+    //   });
+    // }
     // }
   };
   checkPath = (route, path) => {

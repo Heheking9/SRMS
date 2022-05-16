@@ -6,14 +6,18 @@ import {
   Image,
   Form,
   Typography,
+  Col,
   Popconfirm,
+  Row,
+  Tabs,
   InputNumber,
   message,
 } from "antd";
+import { connect } from "react-redux";
+import Echart from "../../components/echarts";
 import { useRef, useCallback, useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import ExportJsonExcel from "js-export-excel";
-import { set } from "immutable";
 
 const EditableCell = ({
   editing,
@@ -50,12 +54,20 @@ const EditableCell = ({
   );
 };
 
-const Com = () => {
+const Com = (props) => {
+  const { keys, role } = props;
+  const lineData = props.location.state?.lineData[0];
+  const Userkeys = keys.split(",");
+  const canfilter = Userkeys.indexOf("11") !== -1 || role === "admin";
+  const canDelete = Userkeys.indexOf("12") !== -1 || role === "admin";
+  const canEdit = Userkeys.indexOf("13") !== -1 || role === "admin";
+  const canExport = Userkeys.indexOf("14") !== -1 || role === "admin";
+  const canMap = Userkeys.indexOf("2") !== -1 || role === "admin";
+  const { TabPane } = Tabs;
   const fileRef = useRef();
   const selectExcel = useCallback(() => {
     fileRef.current.input.click();
   }, []);
-
   const [form] = Form.useForm();
   const [proList, setProList] = useState();
   const [data, setData] = useState([]);
@@ -65,6 +77,7 @@ const Com = () => {
   const [update, setUpdate] = useState(false);
   const [headers, setHeaders] = useState([]);
   const [fileName, setFileName] = useState("");
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const isEditing = (record) => record.key === editingKey;
 
@@ -78,6 +91,34 @@ const Com = () => {
     setEditingKey(record.key);
   };
 
+  useEffect(() => {
+    console.log(lineData);
+    if (lineData) {
+      console.log(lineData);
+      setFileName(lineData.fileName);
+      // const keys = Object.keys(lineData.fileData[0]);
+      console.log(Object.keys(lineData.fileData[0]));
+      const header = Object.keys(lineData.fileData[0]);
+      setHeaders(header);
+      setRowKey("key");
+      const data = header.map((el) => ({
+        align: "center",
+        title: el,
+        dataIndex: el,
+        editable: true,
+        // width: 400,
+      }));
+      console.log(data);
+      setData(data);
+      console.log(lineData.fileData);
+      setProList(lineData.fileData);
+      setUpdate(true);
+
+      // let headers = keys.filter((el) => {
+      //   return el.length === 2 && el.indexOf(1) === 1;
+      // });
+    }
+  }, [lineData]);
   const save = async (key) => {
     try {
       const row = await form.validateFields();
@@ -114,17 +155,32 @@ const Com = () => {
   //   sorter: (a, b) => a.originprice - b.originprice,
   // },
 
-  const exportPro = useCallback(() => {
+  const exportPro = (isPart) => {
+    console.log(isPart, selectedRowKeys);
+    console.log(update);
     if (!update) {
       message.error("您还未上传表格！请先导入数据");
       return;
     }
+    let list = [];
+    if (isPart) {
+      console.log(proList);
+      list = proList.filter((el) => {
+        return selectedRowKeys.indexOf(el[rowKey]) !== -1;
+      });
+      console.log(list);
+      if (list.length === 0) {
+        message.error("您还未选中任何行数据");
+        return false;
+      }
+    }
+
     var option = {};
     option.fileName = fileName;
     //配置表格内容
     option.datas = [
       {
-        sheetData: proList,
+        sheetData: list.length > 0 ? list : proList,
         sheetName: "sheet",
         sheetFilter: headers,
         sheetHeader: headers,
@@ -134,7 +190,7 @@ const Com = () => {
 
     var toExcel = new ExportJsonExcel(option); //new
     toExcel.saveExcel(); //保存
-  }, [proList]);
+  };
 
   // 上传文件
   const uploadFile = () => {
@@ -160,6 +216,7 @@ const Com = () => {
       });
       headers = headers.map((el) => t[el].w);
       setHeaders(headers);
+
       setRowKey(t.A1.w);
       const data = headers.map((el) => ({
         align: "center",
@@ -178,67 +235,81 @@ const Com = () => {
           },
         },
       ].concat(data);
+      console.log(cols);
       setData(cols);
-      setData(data);
       setProList(r);
       setUpdate(true);
     };
   };
-  const handleDelete = (key) => {
+  const handleDelete = (key, isPartDelete) => {
     // const dataSource = [...this.state.dataSource];
-    console.log(proList, key);
     // this.setState({
     //   dataSource: dataSource.filter((item) => item.key !== key),
     // });
+    if (isPartDelete) {
+      const list = proList.filter((el) => {
+        return selectedRowKeys.indexOf(el[rowKey]) === -1;
+      });
+      setProList(list);
+      return;
+    }
     setProList(proList.filter((item) => item.key !== key));
   };
   const columns = update
-    ? data.concat([
-        {
-          title: "operation",
-          dataIndex: "operation",
-          render: (_, record) => {
-            const editable = isEditing(record);
-            return editable ? (
-              <span>
-                <Typography.Link
-                  onClick={() => save(record.key)}
-                  style={{
-                    marginRight: 8,
-                  }}
-                >
-                  Save
-                </Typography.Link>
-                <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                  <a>Cancel</a>
-                </Popconfirm>
-              </span>
-            ) : (
-              <Space size="middle">
-                <Typography.Link
-                  disabled={editingKey !== ""}
-                  onClick={() => edit(record)}
-                >
-                  Edit
-                </Typography.Link>
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => handleDelete(record.key)}
-                >
-                  <a>Delete</a>
-                </Popconfirm>{" "}
-              </Space>
-            );
+    ? canEdit || canDelete
+      ? data.concat([
+          {
+            title: "操作",
+            dataIndex: "operation",
+            render: (_, record) => {
+              const editable = isEditing(record);
+              return editable ? (
+                <span>
+                  <Typography.Link
+                    onClick={() => save(record.key)}
+                    style={{
+                      marginRight: 8,
+                    }}
+                  >
+                    保存
+                  </Typography.Link>
+                  <Popconfirm title="确定要取消吗?" onConfirm={cancel}>
+                    <a>取消</a>
+                  </Popconfirm>
+                </span>
+              ) : (
+                <Space size="middle">
+                  {canEdit && (
+                    <Typography.Link
+                      disabled={editingKey !== ""}
+                      onClick={() => edit(record)}
+                    >
+                      编辑
+                    </Typography.Link>
+                  )}
+                  {canDelete && (
+                    <Popconfirm
+                      title="确定要删除吗"
+                      onConfirm={() => handleDelete(record.key)}
+                    >
+                      <a>删除</a>
+                    </Popconfirm>
+                  )}
+                </Space>
+              );
+            },
           },
-        },
-      ])
+        ])
+      : data
     : [];
+  const callback = (e) => {
+    console.log(e);
+  };
   const mergedColumns = update
     ? columns.map((col) => {
         if (!col.editable) {
           return col;
         }
-
         return {
           ...col,
           onCell: (record) => ({
@@ -251,26 +322,95 @@ const Com = () => {
         };
       })
     : [];
+  const onSelectChange = (selectedRowKeys) => {
+    console.log("selectedRowKeys changed: ", selectedRowKeys);
+    setSelectedRowKeys(selectedRowKeys);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    // selectedRowKeys: ["北京大学"],
+    onChange: onSelectChange,
+  };
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
-      <Button type="primary" onClick={selectExcel}>
-        导入数据
-      </Button>
-      <Button onClick={exportPro}>导出数据</Button>
+      <Row gutter={16}>
+        <Col className="gutter-row" span={2}>
+          <Button type="primary" onClick={selectExcel}>
+            导入数据
+          </Button>
+        </Col>
+        <Col className="gutter-row" span={2}>
+          {canExport && (
+            <Button
+              onClick={() => {
+                exportPro(false);
+              }}
+            >
+              导出数据
+            </Button>
+          )}
+        </Col>
+        <Col className="gutter-row" span={2}>
+          <Button type="primary" onClick={selectExcel}>
+            管理员上传数据
+          </Button>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col className="gutter-row" span={2}>
+          {canExport && (
+            <Button
+              onClick={() => {
+                exportPro(true);
+              }}
+            >
+              导出选中数据
+            </Button>
+          )}
+        </Col>
+        <Col className="gutter-row" span={3}>
+          {canDelete && (
+            <Button
+              danger
+              onClick={() => {
+                handleDelete(1, true);
+              }}
+            >
+              删除选中数据
+            </Button>
+          )}
+        </Col>
+      </Row>
       <Input ref={fileRef} hidden type="file" onChange={uploadFile} />
-      <Form form={form} component={false}>
-        <Table
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          dataSource={proList}
-          columns={mergedColumns}
-          rowKey={rowKey}
-        ></Table>
-      </Form>
+      {update && (
+        <Tabs defaultActiveKey="1" onChange={callback}>
+          <TabPane tab="表格" key="1">
+            <Form form={form} component={false}>
+              <Table
+                components={{
+                  body: {
+                    cell: EditableCell,
+                  },
+                }}
+                rowSelection={rowSelection}
+                dataSource={proList}
+                columns={mergedColumns}
+                rowKey={rowKey}
+              ></Table>
+            </Form>
+          </TabPane>
+          {canMap && (
+            <TabPane tab="可视化" key="2">
+              <Echart xdata={headers} data={proList}></Echart>
+            </TabPane>
+          )}
+        </Tabs>
+      )}
     </Space>
   );
 };
-export default Com;
+export default connect((state) => ({
+  isLogin: state.isLogin,
+  keys: state.keys,
+  role: state.role,
+}))(Com);

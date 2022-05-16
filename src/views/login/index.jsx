@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Tabs } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { loginFn, regFn } from "./../../api/user";
 const Login = (p) => {
+  const { TabPane } = Tabs;
   const [isLogin, setIsLogin] = useState(true);
   const onFinish = (values) => {
     if (isLogin) {
@@ -23,6 +24,13 @@ const Login = (p) => {
   const reg = () => {
     setIsLogin(false);
   };
+  function callback(key) {
+    if (key === 2) {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }
   return (
     <div className="loginBox">
       <Form
@@ -33,56 +41,91 @@ const Login = (p) => {
         }}
         onFinish={onFinish}
       >
-        <Form.Item
-          name="adminname"
-          rules={[
-            {
-              required: true,
-              message: "请输入管理员账户!",
-            },
-          ]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="管理员账户"
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "请输入正确的密码!",
-            },
-          ]}
-        >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="密码"
-          />
-        </Form.Item>
+        <Tabs defaultActiveKey="1" onChange={callback}>
+          <TabPane tab=" 登录" key="1">
+            <Form.Item
+              name="adminname"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入管理员账户!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="管理员账户"
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入正确的密码!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="密码"
+              />
+            </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-            onClick={log}
-          >
-            登 录
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button
-            onClick={reg}
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            注 册
-          </Button>
-        </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="login-form-button"
+                onClick={log}
+              >
+                登 录
+              </Button>
+            </Form.Item>
+          </TabPane>
+          <TabPane tab="注册" key="2">
+            <Form.Item
+              name="adminname"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入管理员账户!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="管理员账户"
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入正确的密码!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="密码"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                onClick={reg}
+                type="primary"
+                htmlType="submit"
+                className="login-form-button"
+              >
+                注 册
+              </Button>
+            </Form.Item>
+          </TabPane>
+        </Tabs>
       </Form>
     </div>
   );
@@ -110,6 +153,7 @@ export default connect(
             localStorage.setItem("adminname", res.data.adminname);
             localStorage.setItem("role", res.data.role);
             localStorage.setItem("isLogin", true);
+            localStorage.setItem("keys", res.data.checkedKeys);
             // 更新状态管理器
             dispatch({
               type: "CHANGE_ADMIN_NAME",
@@ -117,8 +161,10 @@ export default connect(
             });
             // dispatch({ type: "CHANGE_TOKEN", payload: res.data.token });
             console.log(res.data.role);
+            console.log(res.data.checkedKeys);
             dispatch({ type: "CHANGE_ROLE", payload: res.data.role });
             dispatch({ type: "CHANGE_LOGIN_STATE", payload: "true" });
+            dispatch({ type: "CHANGE_keys", payload: res.data.checkedKeys });
             setTimeout(() => {
               // 登录成功之后跳转到系统首页
               window.location.href = "/";
